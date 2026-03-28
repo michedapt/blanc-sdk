@@ -16,7 +16,20 @@ Open-source packages for [Blanc](https://blanc.dev) — a universal render surfa
 claude mcp add blanc --transport http https://blanc.dev/api/mcp
 ```
 
-### Cursor / VS Code
+### Cursor
+
+```json
+{
+  "mcpServers": {
+    "blanc": {
+      "type": "streamable-http",
+      "url": "https://blanc.dev/api/mcp"
+    }
+  }
+}
+```
+
+### VS Code
 
 ```json
 {
@@ -37,7 +50,7 @@ claude mcp add blanc --transport http https://blanc.dev/api/mcp
 npx @blanc/mcp-server
 ```
 
-Set `BLANC_BASE_URL` and `BLANC_API_KEY` environment variables for custom configuration. Defaults to `https://blanc.dev` with the free tier (50 pages/month).
+Set `BLANC_API_KEY` for authenticated access with higher limits. No API key required for the free tier (50 pages/month).
 
 ## MCP Tools
 
@@ -45,6 +58,46 @@ Set `BLANC_BASE_URL` and `BLANC_API_KEY` environment variables for custom config
 |------|-------------|
 | `render-ui` | Create a live page from a json-render spec. Returns a URL. |
 | `get-page` | Fetch an existing page by its short ID. |
+| `list-pages` | List pages you have created. Supports pagination. |
+| `update-page` | Update an existing page's spec or title. |
+
+## How it works
+
+1. **Connect** — Add the MCP server to your agent, or call the [REST API](https://blanc.dev/docs/api) directly
+2. **Describe** — Send a JSON spec describing the UI (cards, grids, forms, tables)
+3. **Get a URL** — Blanc renders the spec as a live page at `blanc.dev/d/{id}`
+4. **Share** — The URL is shareable, embeddable, and always live
+
+## Spec format
+
+A spec is a JSON object with `root`, `elements`, and optional `state`:
+
+```json
+{
+  "root": "page",
+  "elements": {
+    "page": {
+      "type": "Stack",
+      "props": { "gap": "lg" },
+      "children": ["heading"]
+    },
+    "heading": {
+      "type": "Heading",
+      "props": { "text": "Hello from Blanc" },
+      "children": []
+    }
+  }
+}
+```
+
+Blanc uses [json-render](https://json-render.dev) with shadcn/ui components:
+
+- **Layout:** Card, Stack, Grid, Separator, Tabs, Accordion, Collapsible
+- **Content:** Heading, Text, Image, Avatar, Badge, Alert, Table, Progress
+- **Input:** Button, Link, Input, Textarea, Select, Checkbox, Switch, Slider
+- **Overlay:** Dialog, Tooltip, Popover
+
+See the [full documentation](https://blanc.dev/docs) for state, actions, forms, and more.
 
 ## Development
 
