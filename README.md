@@ -10,6 +10,12 @@ Open-source packages for [Blanc](https://blanc.dev) — a universal render surfa
 
 ## Quick Start
 
+### Install as a skill
+
+```bash
+npx skills add michedapt/blanc-sdk
+```
+
 ### Claude Code
 
 ```bash
