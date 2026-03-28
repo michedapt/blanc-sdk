@@ -165,7 +165,7 @@ server.tool(
 // -- update-page --
 server.tool(
   "update-page",
-  "Update an existing page's spec or title. You must be the owner of the page (same API key or free-tier identity that created it). Use get-page first to retrieve the current spec, modify it, then pass the full updated spec here.",
+  "Update an existing page's spec, title, or visibility. You must be the owner of the page (same API key or free-tier identity that created it). Use get-page first to retrieve the current spec, modify it, then pass the full updated spec here.",
   {
     id: z.string().describe("The page ID (UUID, not the short ID)"),
     spec: z
@@ -176,12 +176,17 @@ server.tool(
       .string()
       .optional()
       .describe("Updated title for the page"),
+    public: z
+      .boolean()
+      .optional()
+      .describe("Set to true for public, false for private"),
   },
   async (params) => {
     try {
       const body: Record<string, unknown> = {};
       if (params.spec) body.spec = params.spec;
       if (params.title !== undefined) body.title = params.title;
+      if (params.public !== undefined) body.public = params.public;
       const result = await apiRequest("PATCH", `/specs/${params.id}`, body);
       return toolResult(result);
     } catch (error) {
