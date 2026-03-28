@@ -28,6 +28,8 @@ No API key required. Free tier: 50 pages/month.
 
 1. **render-ui** — Create a live page from a json-render spec. Returns a URL. The tool description includes the full component catalog — follow it exactly.
 2. **get-page** — Fetch an existing page by its short ID.
+3. **list-pages** — List pages you have created. Supports pagination via limit and offset.
+4. **update-page** — Update an existing page's spec or title. You must be the owner.
 
 ## Example
 
