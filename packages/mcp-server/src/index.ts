@@ -2,6 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { catalog } from "./catalog.js";
+import { appCatalog } from "./app-catalog.js";
 
 // ---------------------------------------------------------------------------
 // Config from environment
@@ -75,11 +76,14 @@ const server = new McpServer(
     version: "0.1.0",
   },
   {
-    instructions: `Blanc is a universal render surface. Send a json-render spec, get a live, shareable web page.
+    instructions: `Blanc is a universal render surface. Send a json-render spec, get a live, shareable web page or multi-page app.
 
 Tools:
-- render-ui — Create a page from a spec. Returns a URL.
-- get-page — Fetch an existing page by its short ID.
+- render-ui — Create a single page from a spec. Returns a URL.
+- render-app — Create a multi-page app with routes, layouts, and navigation. Returns a URL.
+- get-page — Fetch an existing page/app by its short ID.
+- update-page — Update an existing page/app.
+- list-pages — List your pages and apps.
 
 Free tier: No API key required. 50 pages/month.`,
   },
@@ -145,10 +149,42 @@ server.tool(
   },
 );
 
+// -- render-app --
+const renderAppDescription = `Create a live, shareable multi-page app from a NextAppSpec. The spec defines routes, layouts, metadata, and navigation. Returns a URL to the rendered app.\n\n${appCatalog.prompt()}`;
+
+server.tool(
+  "render-app",
+  renderAppDescription,
+  {
+    spec: z
+      .record(z.string(), z.unknown())
+      .describe("A NextAppSpec with routes, layouts, and metadata"),
+    title: z
+      .string()
+      .optional()
+      .describe("Title for the app (shown in browser tab)"),
+  },
+  async (params) => {
+    try {
+      const result = await apiRequest<{ id: string; url: string }>(
+        "POST",
+        "/specs",
+        {
+          spec: params.spec,
+          title: params.title,
+        },
+      );
+      return toolResult(result);
+    } catch (error) {
+      return errorResult("render app", error);
+    }
+  },
+);
+
 // -- get-page --
 server.tool(
   "get-page",
-  "Fetch an existing page by its short ID. Returns the spec, title, and metadata.",
+  "Fetch an existing page or app by its short ID. Returns the spec, title, and metadata.",
   {
     id: z.string().describe("The short ID of the page (from the URL)"),
   },

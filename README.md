@@ -65,7 +65,7 @@ Set `BLANC_API_KEY` for authenticated access with higher limits. No API key requ
 | `render-ui` | Create a live page from a json-render spec. Returns a URL. |
 | `get-page` | Fetch an existing page by its short ID. |
 | `list-pages` | List pages you have created. Supports pagination. |
-| `update-page` | Update an existing page's spec or title. |
+| `update-page` | Update an existing page's spec, title, or visibility. |
 
 ## How it works
 
